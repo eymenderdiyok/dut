@@ -3,93 +3,158 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>İyi ki Doğdunuz Duygu Hocam 🎂</title>
+<title>Quantum Mentor - Duygu Hocam</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #1e3c72, #2a5298);
-  color: white;
-  text-align: center;
-  overflow-x: hidden;
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  font-family:'Orbitron',sans-serif;
+  background:#000;
+  color:white;
+  overflow-x:hidden;
 }
 
-h1 {
-  margin-top: 80px;
-  font-size: 3rem;
-  animation: glow 2s infinite alternate;
+canvas{
+  position:fixed;
+  top:0;
+  left:0;
+  z-index:-1;
 }
 
-@keyframes glow {
-  from { text-shadow: 0 0 10px #fff; }
-  to { text-shadow: 0 0 25px #00e5ff; }
+.hero{
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
 }
 
-.card {
-  background: rgba(255,255,255,0.1);
-  padding: 30px;
-  margin: 40px auto;
-  width: 80%;
-  max-width: 600px;
-  border-radius: 20px;
-  backdrop-filter: blur(10px);
+h1{
+  font-size:4rem;
+  background:linear-gradient(90deg,#00f2ff,#8a2be2,#00f2ff);
+  -webkit-background-clip:text;
+  color:transparent;
+  animation:glow 3s infinite linear;
 }
 
-button {
-  padding: 12px 25px;
-  border: none;
-  border-radius: 30px;
-  font-size: 16px;
-  cursor: pointer;
-  background: #00e5ff;
-  color: black;
-  transition: 0.3s;
+@keyframes glow{
+  0%{filter:hue-rotate(0deg)}
+  100%{filter:hue-rotate(360deg)}
 }
 
-button:hover {
-  transform: scale(1.1);
+.subtitle{
+  margin-top:20px;
+  font-size:1.2rem;
+  opacity:0.8;
 }
 
-footer {
-  margin-top: 60px;
-  opacity: 0.7;
+.section{
+  padding:120px 20px;
+  text-align:center;
+  backdrop-filter:blur(10px);
+}
+
+.card{
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:20px;
+  padding:40px;
+  max-width:700px;
+  margin:auto;
+  transition:0.6s;
+}
+
+.card:hover{
+  transform:translateY(-10px);
+  box-shadow:0 0 40px #00f2ff;
+}
+
+button{
+  margin-top:40px;
+  padding:15px 35px;
+  border:none;
+  border-radius:50px;
+  background:linear-gradient(90deg,#00f2ff,#8a2be2);
+  color:white;
+  font-size:1rem;
+  cursor:pointer;
+  transition:0.4s;
+}
+
+button:hover{
+  transform:scale(1.1);
+}
+
+footer{
+  padding:50px;
+  text-align:center;
+  opacity:0.6;
 }
 </style>
 </head>
 
 <body>
 
-<h1>🎉 İyi ki Doğdunuz Duygu Hocam 🎂</h1>
+<canvas id="stars"></canvas>
 
-<div class="card">
-  <h2>💬 Size Bir Mesajım Var</h2>
-  <p>
-    Sadece fen öğretmenim değil, aynı zamanda bana yol gösteren
-    bir mentör olduğunuz için çok şanslıyım.
-    Bilime olan bakışımı değiştirdiğiniz için teşekkür ederim.
-    Yeni yaşınız enerji dolu bir atom gibi olsun! ⚛️
-  </p>
+<div class="hero">
+  <h1>İyi ki Doğdunuz Duygu Hocam</h1>
+  <div class="subtitle">Bilimin Işığı. İlhamın Kaynağı. Mentörüm.</div>
+  <button onclick="launch()">🚀 Quantum Surprise</button>
 </div>
 
-<div class="card">
-  <h2>🔬 Neden En İyi Mentör?</h2>
-  <p>
-    ✔ Merak etmeyi öğretiyorsunuz  
-    ✔ Pes etmemeyi gösteriyorsunuz  
-    ✔ İlham veriyorsunuz  
-  </p>
+<div class="section">
+  <div class="card">
+    <h2>⚛️ Bir Atom Gibi</h2>
+    <p>
+      Enerjiniz hiç bitmeyen bir çekirdek gibi.
+      Öğrettikleriniz hayatımın yörüngesinde dönüyor.
+      Sadece bir öğretmen değil,
+      geleceğimi şekillendiren bir rehbersiniz.
+    </p>
+  </div>
 </div>
-
-<button onclick="celebrate()">🎈 Sürprizi Aç</button>
 
 <footer>
-  <p>Hazırlayan: Sizi çok seven öğrenciniz 💙</p>
+  Hazırlayan: Sizi çok seven öğrenciniz 💙
 </footer>
 
 <script>
-function celebrate() {
-  alert("🎊 Doğum Gününüz Kutlu Olsun Duygu Hocam! 🎊");
+// yıldız arka plan
+const canvas = document.getElementById("stars");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let stars = [];
+for(let i=0;i<200;i++){
+  stars.push({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    size:Math.random()*2
+  });
+}
+
+function drawStars(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle="white";
+  stars.forEach(s=>{
+    ctx.beginPath();
+    ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
+    ctx.fill();
+    s.y+=0.3;
+    if(s.y>canvas.height){s.y=0}
+  });
+  requestAnimationFrame(drawStars);
+}
+drawStars();
+
+function launch(){
+  alert("🎉 Doğum Gününüz Kutlu Olsun Duygu Hocam! 🎉");
 }
 </script>
 
