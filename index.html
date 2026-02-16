@@ -3,159 +3,196 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quantum Mentor - Duygu Hocam</title>
+<title>Quantum Mentor Experience</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-
 body{
   font-family:'Orbitron',sans-serif;
-  background:#000;
+  background:black;
   color:white;
   overflow-x:hidden;
 }
+canvas{position:fixed;top:0;left:0;z-index:-2}
 
-canvas{
+.intro{
   position:fixed;
-  top:0;
-  left:0;
-  z-index:-1;
-}
-
-.hero{
+  width:100%;
   height:100vh;
+  background:black;
   display:flex;
-  flex-direction:column;
   justify-content:center;
   align-items:center;
+  flex-direction:column;
+  z-index:10;
   text-align:center;
 }
-
-h1{
-  font-size:4rem;
-  background:linear-gradient(90deg,#00f2ff,#8a2be2,#00f2ff);
-  -webkit-background-clip:text;
-  color:transparent;
-  animation:glow 3s infinite linear;
+.intro h1{
+  font-size:2rem;
+  opacity:0;
+  animation:fadeIn 3s forwards;
 }
-
-@keyframes glow{
-  0%{filter:hue-rotate(0deg)}
-  100%{filter:hue-rotate(360deg)}
+@keyframes fadeIn{
+  to{opacity:1}
 }
-
-.subtitle{
-  margin-top:20px;
-  font-size:1.2rem;
-  opacity:0.8;
-}
+.hidden{display:none}
 
 .section{
-  padding:120px 20px;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
   text-align:center;
-  backdrop-filter:blur(10px);
 }
 
-.card{
-  background:rgba(255,255,255,0.05);
-  border:1px solid rgba(255,255,255,0.1);
-  border-radius:20px;
-  padding:40px;
-  max-width:700px;
-  margin:auto;
-  transition:0.6s;
-}
-
-.card:hover{
-  transform:translateY(-10px);
-  box-shadow:0 0 40px #00f2ff;
+h2{
+  font-size:3rem;
+  background:linear-gradient(90deg,#00f2ff,#8a2be2);
+  -webkit-background-clip:text;
+  color:transparent;
 }
 
 button{
-  margin-top:40px;
-  padding:15px 35px;
+  margin-top:30px;
+  padding:15px 30px;
   border:none;
-  border-radius:50px;
+  border-radius:30px;
   background:linear-gradient(90deg,#00f2ff,#8a2be2);
   color:white;
-  font-size:1rem;
   cursor:pointer;
   transition:0.4s;
 }
+button:hover{transform:scale(1.1)}
 
-button:hover{
-  transform:scale(1.1);
-}
-
-footer{
-  padding:50px;
-  text-align:center;
-  opacity:0.6;
+.secret{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  background:rgba(255,255,255,0.1);
+  padding:15px;
+  border-radius:15px;
+  display:none;
 }
 </style>
 </head>
 
 <body>
 
-<canvas id="stars"></canvas>
+<!-- Lofi Music -->
+<audio id="music" loop>
+  <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_c8e4d90f8a.mp3">
+</audio>
 
-<div class="hero">
-  <h1>İyi ki Doğdunuz Duygu Hocam</h1>
-  <div class="subtitle">Bilimin Işığı. İlhamın Kaynağı. Mentörüm.</div>
-  <button onclick="launch()">🚀 Quantum Surprise</button>
+<div class="intro" id="intro">
+  <h1>Mentörüm olmasaydı...<br>Belki de bilimin ışığını hiç göremeyecektim.</h1>
+  <button onclick="startExperience()">Deneyimi Başlat 🚀</button>
 </div>
 
 <div class="section">
-  <div class="card">
-    <h2>⚛️ Bir Atom Gibi</h2>
-    <p>
-      Enerjiniz hiç bitmeyen bir çekirdek gibi.
-      Öğrettikleriniz hayatımın yörüngesinde dönüyor.
-      Sadece bir öğretmen değil,
-      geleceğimi şekillendiren bir rehbersiniz.
-    </p>
-  </div>
+  <h2>İyi ki Doğdunuz Duygu Hocam ⚛️</h2>
 </div>
 
-<footer>
-  Hazırlayan: Sizi çok seven öğrenciniz 💙
-</footer>
+<div class="section">
+  <h2>Enerjiniz Bir Atom Çekirdeği Gibi</h2>
+</div>
+
+<div class="section">
+  <h2>Bilimin Işığı Hiç Sönmesin 🌌</h2>
+</div>
+
+<div class="secret" id="secret">
+  💙 Gizli Mesaj: Sadece öğretmen değil, geleceğimi şekillendiren ilhamsınız.
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
 <script>
-// yıldız arka plan
-const canvas = document.getElementById("stars");
-const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+// Intro
+function startExperience(){
+  document.getElementById("intro").classList.add("hidden");
+  document.getElementById("music").play();
+}
 
-let stars = [];
-for(let i=0;i<200;i++){
-  stars.push({
-    x:Math.random()*canvas.width,
-    y:Math.random()*canvas.height,
-    size:Math.random()*2
+// Three.js Scene
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({alpha:true});
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+// Atom core
+const coreGeometry = new THREE.SphereGeometry(1,32,32);
+const coreMaterial = new THREE.MeshBasicMaterial({color:0x00f2ff});
+const core = new THREE.Mesh(coreGeometry, coreMaterial);
+scene.add(core);
+
+// Electrons
+const electronGeometry = new THREE.SphereGeometry(0.2,16,16);
+const electronMaterial = new THREE.MeshBasicMaterial({color:0xff00ff});
+const electrons=[];
+for(let i=0;i<3;i++){
+  const e = new THREE.Mesh(electronGeometry, electronMaterial);
+  scene.add(e);
+  electrons.push(e);
+}
+
+camera.position.z = 5;
+
+// Particles
+const particlesGeometry = new THREE.BufferGeometry();
+const particlesCount = 1000;
+const posArray = new Float32Array(particlesCount * 3);
+
+for(let i=0;i<particlesCount*3;i++){
+  posArray[i] = (Math.random() - 0.5) * 20;
+}
+particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray,3));
+const particlesMaterial = new THREE.PointsMaterial({size:0.05,color:0xffffff});
+const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+scene.add(particlesMesh);
+
+// Mouse magnetic effect
+let mouseX=0;
+document.addEventListener('mousemove', (event)=>{
+  mouseX = (event.clientX/window.innerWidth - 0.5)*2;
+});
+
+// Scroll planets
+window.addEventListener('scroll', ()=>{
+  camera.position.z = 5 + window.scrollY * 0.01;
+});
+
+// Secret click
+document.addEventListener('click', ()=>{
+  document.getElementById("secret").style.display="block";
+});
+
+// Animation
+function animate(){
+  requestAnimationFrame(animate);
+
+  core.rotation.y += 0.01;
+
+  electrons.forEach((e,i)=>{
+    const angle = Date.now()*0.001 + i*2;
+    e.position.x = Math.cos(angle)*2;
+    e.position.y = Math.sin(angle)*2;
   });
-}
 
-function drawStars(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.fillStyle="white";
-  stars.forEach(s=>{
-    ctx.beginPath();
-    ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
-    ctx.fill();
-    s.y+=0.3;
-    if(s.y>canvas.height){s.y=0}
-  });
-  requestAnimationFrame(drawStars);
-}
-drawStars();
+  camera.position.x += (mouseX - camera.position.x) * 0.05;
 
-function launch(){
-  alert("🎉 Doğum Gününüz Kutlu Olsun Duygu Hocam! 🎉");
+  renderer.render(scene,camera);
 }
+animate();
+
+window.addEventListener('resize',()=>{
+  camera.aspect=window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth,window.innerHeight);
+});
 </script>
 
 </body>
