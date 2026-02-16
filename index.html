@@ -3,150 +3,367 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Duygu Mentörlük Paneli</title>
+    <title>Duygu'nun Bilim Üssü</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
-            --primary: #4a90e2;
-            --bg: #f4f7f6;
-            --text: #333;
-            --accent: #e91e63;
+            --primary-color: #4CAF50; /* Bilim ve doğa hissi veren yeşil */
+            --secondary-color: #FFC107; /* Vurgu için sarı */
+            --text-color: #333;
+            --background-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --hover-color: #388E3C;
+            --border-radius: 12px;
+            --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.08);
+            --shadow-medium: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        /* Birthday Mode için özel renkler */
+        body.birthday-mode {
+            --primary-color: #E91E63; /* Canlı pembe */
+            --secondary-color: #FFEB3B; /* Parlak sarı */
+            --text-color: #2a0000;
+            --background-color: #ffe0e6;
+            animation: backgroundFade 2s infinite alternate;
+        }
+        @keyframes backgroundFade {
+            from { background-color: #ffe0e6; }
+            to { background-color: #fff0f5; }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            transition: all 0.5s ease;
-        }
-
-        /* Doğum Günü Teması CSS */
-        body.birthday-mode {
-            background-color: #fff5f8;
-            border: 10px solid #ffcfdf;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 20px auto;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Başlangıçtan başlasın */
+            min-height: 100vh;
             padding: 20px;
+            transition: background-color 0.5s ease;
         }
 
-        header {
-            text-align: center;
-            padding: 40px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-
-        .grid {
+        .dashboard-container {
+            width: 100%;
+            max-width: 1200px;
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            grid-template-columns: 1fr;
+            gap: 25px;
+            padding: 25px;
+            background-color: var(--background-color); /* Override body */
+            border-radius: var(--border-radius);
+        }
+
+        /* Header ve Birthday Banner */
+        .header-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--hover-color));
+            color: white;
+            padding: 40px 30px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            box-shadow: var(--shadow-medium);
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 1s ease-out;
+        }
+        .header-card h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        .header-card p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        #birthday-banner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: var(--primary-color);
+            display: none; /* Varsayılan olarak gizli */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 3.5em;
+            font-weight: 900;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.1);
+            animation: pulse 1.5s infinite;
+            z-index: 10;
+        }
+        #birthday-banner span {
+            display: block;
+            margin-bottom: 15px;
+            font-size: 0.8em;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+
+        /* Main Content Grid */
+        .main-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
         }
 
         .card {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-light);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            animation: slideInUp 0.6s ease-out;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-medium);
         }
 
-        h2 { color: var(--primary); border-bottom: 2px solid #eee; padding-bottom: 10px; }
-
-        .book-list, .student-list { list-style: none; padding: 0; }
-        .item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
-
-        #birthday-msg {
-            display: none;
-            color: var(--accent);
-            font-size: 24px;
-            font-weight: bold;
-            animation: bounce 1s infinite;
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+        }
+        h2 i {
+            margin-right: 10px;
+            color: var(--secondary-color);
         }
 
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        ul { list-style: none; padding: 0; }
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 1.1em;
+            transition: background-color 0.2s ease;
         }
+        .list-item:last-child { border-bottom: none; }
+        .list-item:hover { background-color: #f9f9f9; }
 
         .btn {
-            background: var(--primary);
+            background-color: var(--secondary-color);
             color: white;
             padding: 8px 15px;
+            border-radius: 8px;
             text-decoration: none;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn i { margin-right: 5px; }
+        .btn:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Checkbox Styling */
+        .student-item label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        .student-item input[type="checkbox"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--primary-color);
             border-radius: 5px;
-            font-size: 14px;
+            margin-right: 10px;
+            position: relative;
+            cursor: pointer;
+            outline: none;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+        .student-item input[type="checkbox"]:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        .student-item input[type="checkbox"]:checked::after {
+            content: '\f00c'; /* Font Awesome check icon */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12px;
+        }
+        .student-item span.student-name {
+            transition: text-decoration 0.3s ease, color 0.3s ease;
+        }
+        .student-item input[type="checkbox"]:checked + span.student-name {
+            text-decoration: line-through;
+            color: #888;
+        }
+
+        /* Motivation/Quote Card */
+        .quote-card {
+            font-style: italic;
+            text-align: center;
+            color: #555;
+            font-size: 1.2em;
+            position: relative;
+            min-height: 120px; /* Sabit yükseklik */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .quote-card i {
+            font-size: 2em;
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+        .quote-card .author {
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #777;
+            font-weight: bold;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 15px;
+            }
+            .header-card h1 {
+                font-size: 2.5em;
+            }
+            .header-card p {
+                font-size: 1em;
+            }
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            #birthday-banner {
+                font-size: 2.5em;
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <header id="main-header">
-        <h1 id="welcome-text">Hoş Geldin, Duygu Mentör!</h1>
-        <div id="birthday-msg">🎂 İYİ Kİ DOĞDUN! 🎉</div>
-        <p>Bugün yapılacak çok işimiz var!</p>
-    </header>
+<div class="dashboard-container">
+    <div class="header-card">
+        <div id="birthday-banner">
+            <span>🎉 Mutlu Yıllar! 🎉</span>
+            <span>İYİ Kİ DOĞDUN DUYGU HOCAM!</span>
+            <i class="fas fa-gift"></i>
+        </div>
+        <h1 id="welcome-title">Duygu'nun Bilim Üssü</h1>
+        <p id="welcome-message">Fen'in ve Mentörlüğün Kalbi Burada Atıyor!</p>
+    </div>
 
-    <div class="grid">
+    <div class="main-content">
         <div class="card">
-            <h2>📚 Ders Kitapları</h2>
-            <ul class="book-list">
-                <li class="item">Matematik 101 <a href="#" class="btn">Aç</a></li>
-                <li class="item">Edebiyat Notları <a href="#" class="btn">Aç</a></li>
-                <li class="item">Fen Bilimleri <a href="#" class="btn">Aç</a></li>
+            <h2><i class="fas fa-book-open"></i> Ders Materyalleri</h2>
+            <ul>
+                <li class="list-item">Fen Bilgisi Kaynakları <a href="https://bilim.org/kaynaklar" target="_blank" class="btn"><i class="fas fa-external-link-alt"></i> Aç</a></li>
+                <li class="list-item">Matematik Özetleri <a href="https://math.com/ozetler" target="_blank" class="btn"><i class="fas fa-external-link-alt"></i> Aç</a></li>
+                <li class="list-item">LGS Deneme Sınavları <a href="https://lgs.org/denemeler" target="_blank" class="btn"><i class="fas fa-external-link-alt"></i> Aç</a></li>
+                <li class="list-item">Ek Okuma Listesi <a href="https://readinglist.com" target="_blank" class="btn"><i class="fas fa-external-link-alt"></i> Aç</a></li>
             </ul>
         </div>
 
         <div class="card">
-            <h2>✅ Ödev Kontrol</h2>
-            <ul class="student-list">
-                <li class="item">Ali Yılmaz <input type="checkbox"></li>
-                <li class="item">Ayşe Demir <input type="checkbox"></li>
-                <li class="item">Mehmet Can <input type="checkbox"></li>
+            <h2><i class="fas fa-clipboard-check"></i> Öğrenci Ödev Takibi</h2>
+            <ul>
+                <li class="list-item student-item">
+                    <label>
+                        <input type="checkbox" id="student1-task">
+                        <span class="student-name">Ali Yılmaz - Fen Ödevi (3. Ünite)</span>
+                    </label>
+                </li>
+                <li class="list-item student-item">
+                    <label>
+                        <input type="checkbox" id="student2-task">
+                        <span class="student-name">Ayşe Demir - Matematik Soruları</span>
+                    </label>
+                </li>
+                <li class="list-item student-item">
+                    <label>
+                        <input type="checkbox" id="student3-task">
+                        <span class="student-name">Caner Ege - Edebiyat Projesi</span>
+                    </label>
+                </li>
+                 <li class="list-item student-item">
+                    <label>
+                        <input type="checkbox" id="student4-task">
+                        <span class="student-name">Zeynep Kaya - Bilim Projesi Sunumu</span>
+                    </label>
+                </li>
             </ul>
+        </div>
+
+        <div class="card">
+            <h2><i class="fas fa-pencil-alt"></i> Mentör Notları</h2>
+            <textarea placeholder="Buraya önemli notlar alabilirsin..." rows="6" style="width: 100%; border: 1px solid #ddd; border-radius: 8px; padding: 10px; font-family: inherit; font-size: 1em; resize: vertical;"></textarea>
+            <button class="btn" style="margin-top: 15px; width: 100%; background-color: #007bff;"><i class="fas fa-save"></i> Notu Kaydet</button>
+        </div>
+
+        <div class="card quote-card">
+            <h2><i class="fas fa-lightbulb"></i> Günün Bilgisi</h2>
+            <p id="daily-quote">"Bilim, bir elmanın düşüşünü sadece kaydetmez, neden düştüğünü de sorgular."</p>
+            <div class="author">- Anonymous</div>
         </div>
     </div>
 </div>
 
 <script>
-    function checkBirthday() {
+    function activateBirthdayMode() {
         const today = new Date();
         const day = today.getDate();
-        const month = today.getMonth() + 1; // Şubat = 2
+        const month = today.getMonth() + 1; // JS'de aylar 0'dan başlar
 
-        // 17 Şubat Kontrolü
-        if (day === 17 && month === 2) {
+        // BUGÜN 17 ŞUBAT!
+        if (day === 17 && month === 2) { // 17 Şubat
             document.body.classList.add('birthday-mode');
-            document.getElementById('birthday-msg').style.display = 'block';
-            document.getElementById('welcome-text').innerText = "Mutlu Yıllar Duygu! 🎈";
-            
-            // Konfeti Yağdır
+            document.getElementById('birthday-banner').style.display = 'flex'; // Banner'ı göster
+            document.getElementById('welcome-title').style.display = 'none'; // Normal başlığı gizle
+            document.getElementById('welcome-message').style.display = 'none'; // Normal mesajı gizle
+
+            // Konfeti yağdır
             var duration = 15 * 1000;
             var animationEnd = Date.now() + duration;
-            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 }; // Konfetiyi öne getir
 
             function randomInRange(min, max) {
-              return Math.random() * (max - min) + min;
-            }
-
-            var interval = setInterval(function() {
-              var timeLeft = animationEnd - Date.now();
-              if (timeLeft <= 0) return clearInterval(interval);
-              var particleCount = 50 * (timeLeft / duration);
-              confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
-              confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
-            }, 250);
-        }
-    }
-
-    // Sayfa yüklendiğinde kontrol et
-    window.onload = checkBirthday;
-</script>
-
-</body>
-</html>
+              return Math.random()
