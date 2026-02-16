@@ -3,197 +3,169 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quantum Mentor Experience</title>
+<title>Bilimin Evreni - Duygu Hocam</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{
-  font-family:'Orbitron',sans-serif;
   background:black;
   color:white;
-  overflow-x:hidden;
+  font-family:'Orbitron',sans-serif;
+  overflow:hidden;
 }
-canvas{position:fixed;top:0;left:0;z-index:-2}
-
+canvas{position:fixed;top:0;left:0;z-index:-1}
 .intro{
   position:fixed;
   width:100%;
   height:100vh;
-  background:black;
   display:flex;
   justify-content:center;
   align-items:center;
-  flex-direction:column;
-  z-index:10;
   text-align:center;
+  background:black;
+  animation:fadeOut 6s forwards 5s;
+  z-index:5;
 }
 .intro h1{
   font-size:2rem;
   opacity:0;
-  animation:fadeIn 3s forwards;
+  animation:fadeIn 4s forwards;
 }
-@keyframes fadeIn{
-  to{opacity:1}
-}
-.hidden{display:none}
-
-.section{
-  height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  flex-direction:column;
-  text-align:center;
-}
-
-h2{
-  font-size:3rem;
-  background:linear-gradient(90deg,#00f2ff,#8a2be2);
-  -webkit-background-clip:text;
-  color:transparent;
-}
-
-button{
-  margin-top:30px;
-  padding:15px 30px;
-  border:none;
-  border-radius:30px;
-  background:linear-gradient(90deg,#00f2ff,#8a2be2);
-  color:white;
-  cursor:pointer;
-  transition:0.4s;
-}
-button:hover{transform:scale(1.1)}
-
+@keyframes fadeIn{to{opacity:1}}
+@keyframes fadeOut{to{opacity:0;visibility:hidden}}
 .secret{
   position:fixed;
-  bottom:20px;
-  right:20px;
+  bottom:30px;
+  right:30px;
   background:rgba(255,255,255,0.1);
-  padding:15px;
-  border-radius:15px;
+  padding:20px;
+  border-radius:20px;
+  backdrop-filter:blur(10px);
   display:none;
 }
 </style>
 </head>
-
 <body>
 
-<!-- Lofi Music -->
-<audio id="music" loop>
-  <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_c8e4d90f8a.mp3">
-</audio>
-
-<div class="intro" id="intro">
-  <h1>Mentörüm olmasaydı...<br>Belki de bilimin ışığını hiç göremeyecektim.</h1>
-  <button onclick="startExperience()">Deneyimi Başlat 🚀</button>
-</div>
-
-<div class="section">
-  <h2>İyi ki Doğdunuz Duygu Hocam ⚛️</h2>
-</div>
-
-<div class="section">
-  <h2>Enerjiniz Bir Atom Çekirdeği Gibi</h2>
-</div>
-
-<div class="section">
-  <h2>Bilimin Işığı Hiç Sönmesin 🌌</h2>
+<div class="intro">
+  <h1>Bilimin ışığı… hücreden galaksilere kadar uzanır.<br>İyi ki doğdunuz Duygu Hocam ✨</h1>
 </div>
 
 <div class="secret" id="secret">
-  💙 Gizli Mesaj: Sadece öğretmen değil, geleceğimi şekillendiren ilhamsınız.
+💙 Gizli Mesaj: Öğrettikleriniz, evren kadar büyük bir iz bırakıyor.
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
 <script>
-// Intro
-function startExperience(){
-  document.getElementById("intro").classList.add("hidden");
-  document.getElementById("music").play();
-}
-
-// Three.js Scene
+// Scene
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer({alpha:true});
-renderer.setSize(window.innerWidth, window.innerHeight);
+const camera = new THREE.PerspectiveCamera(75, innerWidth/innerHeight,0.1,1000);
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(innerWidth,innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// Atom core
-const coreGeometry = new THREE.SphereGeometry(1,32,32);
-const coreMaterial = new THREE.MeshBasicMaterial({color:0x00f2ff});
-const core = new THREE.Mesh(coreGeometry, coreMaterial);
-scene.add(core);
+// Glow light
+const light = new THREE.PointLight(0xffffff,2,100);
+light.position.set(10,10,10);
+scene.add(light);
 
-// Electrons
-const electronGeometry = new THREE.SphereGeometry(0.2,16,16);
-const electronMaterial = new THREE.MeshBasicMaterial({color:0xff00ff});
-const electrons=[];
-for(let i=0;i<3;i++){
-  const e = new THREE.Mesh(electronGeometry, electronMaterial);
-  scene.add(e);
-  electrons.push(e);
+// Sun
+const sunGeo = new THREE.SphereGeometry(2,32,32);
+const sunMat = new THREE.MeshStandardMaterial({emissive:0xffaa00, color:0xff5500});
+const sun = new THREE.Mesh(sunGeo,sunMat);
+scene.add(sun);
+
+// Earth
+const earthGeo = new THREE.SphereGeometry(1,32,32);
+const earthMat = new THREE.MeshStandardMaterial({color:0x0033ff});
+const earth = new THREE.Mesh(earthGeo,earthMat);
+scene.add(earth);
+
+// Moon
+const moonGeo = new THREE.SphereGeometry(0.3,16,16);
+const moonMat = new THREE.MeshStandardMaterial({color:0xaaaaaa});
+const moon = new THREE.Mesh(moonGeo,moonMat);
+scene.add(moon);
+
+// Saturn
+const saturnGeo = new THREE.SphereGeometry(1.2,32,32);
+const saturnMat = new THREE.MeshStandardMaterial({color:0xffcc99});
+const saturn = new THREE.Mesh(saturnGeo,saturnMat);
+scene.add(saturn);
+
+const ringGeo = new THREE.RingGeometry(1.5,2,64);
+const ringMat = new THREE.MeshBasicMaterial({color:0xffffff,side:THREE.DoubleSide});
+const ring = new THREE.Mesh(ringGeo,ringMat);
+ring.rotation.x = Math.PI/2;
+saturn.add(ring);
+
+// Cell nucleus
+const nucleusGeo = new THREE.SphereGeometry(0.5,32,32);
+const nucleusMat = new THREE.MeshStandardMaterial({color:0xff00ff});
+const nucleus = new THREE.Mesh(nucleusGeo,nucleusMat);
+scene.add(nucleus);
+
+// Particles (stars)
+const starGeo = new THREE.BufferGeometry();
+const starCount = 2000;
+const starPos = new Float32Array(starCount*3);
+for(let i=0;i<starCount*3;i++){
+  starPos[i] = (Math.random()-0.5)*100;
 }
+starGeo.setAttribute('position', new THREE.BufferAttribute(starPos,3));
+const starMat = new THREE.PointsMaterial({size:0.2,color:0xffffff});
+const stars = new THREE.Points(starGeo,starMat);
+scene.add(stars);
 
-camera.position.z = 5;
+// Camera
+camera.position.z = 15;
 
-// Particles
-const particlesGeometry = new THREE.BufferGeometry();
-const particlesCount = 1000;
-const posArray = new Float32Array(particlesCount * 3);
-
-for(let i=0;i<particlesCount*3;i++){
-  posArray[i] = (Math.random() - 0.5) * 20;
-}
-particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray,3));
-const particlesMaterial = new THREE.PointsMaterial({size:0.05,color:0xffffff});
-const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
-scene.add(particlesMesh);
-
-// Mouse magnetic effect
-let mouseX=0;
-document.addEventListener('mousemove', (event)=>{
-  mouseX = (event.clientX/window.innerWidth - 0.5)*2;
-});
-
-// Scroll planets
-window.addEventListener('scroll', ()=>{
-  camera.position.z = 5 + window.scrollY * 0.01;
-});
-
-// Secret click
-document.addEventListener('click', ()=>{
-  document.getElementById("secret").style.display="block";
+// Explosion
+document.addEventListener("click",()=>{
+  for(let i=0;i<starCount*3;i++){
+    starPos[i] *= 1.2;
+  }
+  starGeo.attributes.position.needsUpdate = true;
 });
 
 // Animation
 function animate(){
   requestAnimationFrame(animate);
 
-  core.rotation.y += 0.01;
+  const t = Date.now()*0.001;
 
-  electrons.forEach((e,i)=>{
-    const angle = Date.now()*0.001 + i*2;
-    e.position.x = Math.cos(angle)*2;
-    e.position.y = Math.sin(angle)*2;
-  });
+  earth.position.x = Math.cos(t)*6;
+  earth.position.z = Math.sin(t)*6;
 
-  camera.position.x += (mouseX - camera.position.x) * 0.05;
+  moon.position.x = earth.position.x + Math.cos(t*3)*2;
+  moon.position.z = earth.position.z + Math.sin(t*3)*2;
+
+  saturn.position.x = Math.cos(t*0.5)*10;
+  saturn.position.z = Math.sin(t*0.5)*10;
+
+  nucleus.position.x = Math.sin(t*2)*3;
+  nucleus.position.y = Math.cos(t*2)*3;
+
+  sun.rotation.y += 0.01;
 
   renderer.render(scene,camera);
 }
 animate();
 
-window.addEventListener('resize',()=>{
-  camera.aspect=window.innerWidth/window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth,window.innerHeight);
-});
-</script>
+// AI Voice Message
+window.onload = ()=>{
+  const msg = new SpeechSynthesisUtterance("İyi ki doğdunuz Duygu Hocam. Bilimin ışığıyla nice yıllara.");
+  msg.lang="tr-TR";
+  speechSynthesis.speak(msg);
 
+  setTimeout(()=>{
+    document.getElementById("secret").style.display="block";
+  },8000);
+};
+
+</script>
 </body>
 </html>
