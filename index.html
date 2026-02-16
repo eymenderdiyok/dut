@@ -3,32 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Science Universe - Duygu Hocam</title>
+<title>Science Universe</title>
 <style>
-body{margin:0;overflow:auto;background:black;color:white}
+body{margin:0;overflow:auto;background:black;color:white;font-family:sans-serif}
 canvas{position:fixed;top:0;left:0}
 .section{
   height:100vh;
   display:flex;
   justify-content:center;
   align-items:center;
-  font-size:3rem;
-  text-align:center;
+  font-size:2rem;
 }
 </style>
 </head>
 <body>
 
-<div class="section">Bilimin Evrenine Hoşgeldiniz ✨</div>
+<div class="section">Bilimin Evreni ✨</div>
 <div class="section">Işığın Dünyası 💫</div>
-<div class="section">Hücreden Galaksilere 🔬🌌</div>
+<div class="section">Hücreden Galaksiye 🔬🌌</div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/postprocessing/EffectComposer.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/postprocessing/RenderPass.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/postprocessing/UnrealBloomPass.js"></script>
+<script type="module">
 
-<script>
+import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
+import { EffectComposer } from "https://unpkg.com/three@0.160.0/examples/jsm/postprocessing/EffectComposer.js";
+import { RenderPass } from "https://unpkg.com/three@0.160.0/examples/jsm/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "https://unpkg.com/three@0.160.0/examples/jsm/postprocessing/UnrealBloomPass.js";
+
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75,innerWidth/innerHeight,0.1,1000);
 const renderer = new THREE.WebGLRenderer({antialias:true});
@@ -36,30 +36,31 @@ renderer.setSize(innerWidth,innerHeight);
 document.body.appendChild(renderer.domElement);
 
 // BLOOM
-const composer = new THREE.EffectComposer(renderer);
-composer.addPass(new THREE.RenderPass(scene,camera));
-const bloomPass = new THREE.UnrealBloomPass(
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene,camera));
+const bloom = new UnrealBloomPass(
   new THREE.Vector2(innerWidth,innerHeight),
   1.5,0.4,0.85
 );
-composer.addPass(bloomPass);
+composer.addPass(bloom);
 
 // LIGHT
-const light = new THREE.PointLight(0xffffff,2,200);
-light.position.set(20,20,20);
+const light = new THREE.PointLight(0xffffff,2,100);
+light.position.set(10,10,10);
 scene.add(light);
 
 // SUN
 const sun = new THREE.Mesh(
-  new THREE.SphereGeometry(2,32,32),
+  new THREE.SphereGeometry(2,64,64),
   new THREE.MeshBasicMaterial({color:0xffaa00})
 );
 scene.add(sun);
 
-// EARTH with atmosphere
-const earthGeo = new THREE.SphereGeometry(1,64,64);
-const earthMat = new THREE.MeshPhongMaterial({color:0x0033ff});
-const earth = new THREE.Mesh(earthGeo,earthMat);
+// EARTH + atmosphere
+const earth = new THREE.Mesh(
+  new THREE.SphereGeometry(1,64,64),
+  new THREE.MeshPhongMaterial({color:0x0066ff})
+);
 scene.add(earth);
 
 const atmosphere = new THREE.Mesh(
@@ -73,73 +74,73 @@ const atmosphere = new THREE.Mesh(
 );
 earth.add(atmosphere);
 
-// DNA
-const dnaGroup = new THREE.Group();
-for(let i=0;i<50;i++){
-  const angle = i*0.3;
-  const sphere = new THREE.Mesh(
-    new THREE.SphereGeometry(0.1,16,16),
+// DNA double helix
+const dna = new THREE.Group();
+for(let i=0;i<80;i++){
+  const angle=i*0.3;
+  const s1=new THREE.Mesh(
+    new THREE.SphereGeometry(0.1),
     new THREE.MeshStandardMaterial({color:0xff00ff})
   );
-  sphere.position.set(Math.cos(angle),i*0.1-2,Math.sin(angle));
-  dnaGroup.add(sphere);
+  const s2=s1.clone();
+  s1.position.set(Math.cos(angle),i*0.1-4,Math.sin(angle));
+  s2.position.set(Math.cos(angle+Math.PI),i*0.1-4,Math.sin(angle+Math.PI));
+  dna.add(s1); dna.add(s2);
 }
-scene.add(dnaGroup);
+scene.add(dna);
 
-// Cell + Mitochondria
-const cell = new THREE.Mesh(
+// CELL + mitochondria
+const cell=new THREE.Mesh(
   new THREE.SphereGeometry(2,32,32),
   new THREE.MeshStandardMaterial({color:0x00ff99,transparent:true,opacity:0.3})
 );
 scene.add(cell);
 
-const mito = new THREE.Mesh(
+const mito=new THREE.Mesh(
   new THREE.TorusGeometry(0.5,0.2,16,100),
   new THREE.MeshStandardMaterial({color:0xff0000})
 );
 cell.add(mito);
 
-// Photons
-const photonGeo = new THREE.BufferGeometry();
-const photonCount = 1000;
-const photonPos = new Float32Array(photonCount*3);
-for(let i=0;i<photonCount*3;i++){
-  photonPos[i]=(Math.random()-0.5)*50;
-}
-photonGeo.setAttribute('position',new THREE.BufferAttribute(photonPos,3));
-const photons = new THREE.Points(
-  photonGeo,
-  new THREE.PointsMaterial({size:0.1,color:0xffffff})
+// PHOTONS
+const geo=new THREE.BufferGeometry();
+const count=1500;
+const pos=new Float32Array(count*3);
+for(let i=0;i<count*3;i++) pos[i]=(Math.random()-0.5)*100;
+geo.setAttribute("position",new THREE.BufferAttribute(pos,3));
+const photons=new THREE.Points(
+  geo,
+  new THREE.PointsMaterial({size:0.15,color:0xffffff})
 );
 scene.add(photons);
 
-// Camera
+// CAMERA
 camera.position.z=15;
 
-// Scroll photon movement
+// Scroll photon depth
 window.addEventListener("scroll",()=>{
-  const scrollY=window.scrollY;
-  photons.position.z = scrollY*0.01;
+  photons.position.z=window.scrollY*0.02;
 });
 
 // Confetti physics
 let confetti=[];
-function createConfetti(){
+function explode(){
   for(let i=0;i<200;i++){
-    const geo=new THREE.BoxGeometry(0.1,0.1,0.1);
-    const mat=new THREE.MeshBasicMaterial({color:Math.random()*0xffffff});
-    const cube=new THREE.Mesh(geo,mat);
+    const cube=new THREE.Mesh(
+      new THREE.BoxGeometry(0.15,0.15,0.15),
+      new THREE.MeshBasicMaterial({color:Math.random()*0xffffff})
+    );
     cube.position.set(0,0,0);
     cube.velocity={
-      x:(Math.random()-0.5)*0.2,
-      y:Math.random()*0.3,
-      z:(Math.random()-0.5)*0.2
+      x:(Math.random()-0.5)*0.4,
+      y:Math.random()*0.5,
+      z:(Math.random()-0.5)*0.4
     };
     scene.add(cube);
     confetti.push(cube);
   }
 }
-document.addEventListener("click",createConfetti);
+document.addEventListener("click",explode);
 
 // Animate
 function animate(){
@@ -151,14 +152,14 @@ function animate(){
   earth.position.z=Math.sin(t)*6;
 
   earth.rotation.y+=0.01;
-  dnaGroup.rotation.y+=0.02;
+  dna.rotation.y+=0.02;
   mito.rotation.x+=0.05;
 
   confetti.forEach(c=>{
     c.position.x+=c.velocity.x;
     c.position.y+=c.velocity.y;
     c.position.z+=c.velocity.z;
-    c.velocity.y-=0.005;
+    c.velocity.y-=0.01;
   });
 
   composer.render();
