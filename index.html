@@ -3,168 +3,167 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bilimin Evreni - Duygu Hocam</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-
+<title>Science Universe - Duygu Hocam</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{
-  background:black;
-  color:white;
-  font-family:'Orbitron',sans-serif;
-  overflow:hidden;
-}
-canvas{position:fixed;top:0;left:0;z-index:-1}
-.intro{
-  position:fixed;
-  width:100%;
+body{margin:0;overflow:auto;background:black;color:white}
+canvas{position:fixed;top:0;left:0}
+.section{
   height:100vh;
   display:flex;
   justify-content:center;
   align-items:center;
+  font-size:3rem;
   text-align:center;
-  background:black;
-  animation:fadeOut 6s forwards 5s;
-  z-index:5;
-}
-.intro h1{
-  font-size:2rem;
-  opacity:0;
-  animation:fadeIn 4s forwards;
-}
-@keyframes fadeIn{to{opacity:1}}
-@keyframes fadeOut{to{opacity:0;visibility:hidden}}
-.secret{
-  position:fixed;
-  bottom:30px;
-  right:30px;
-  background:rgba(255,255,255,0.1);
-  padding:20px;
-  border-radius:20px;
-  backdrop-filter:blur(10px);
-  display:none;
 }
 </style>
 </head>
 <body>
 
-<div class="intro">
-  <h1>Bilimin ışığı… hücreden galaksilere kadar uzanır.<br>İyi ki doğdunuz Duygu Hocam ✨</h1>
-</div>
-
-<div class="secret" id="secret">
-💙 Gizli Mesaj: Öğrettikleriniz, evren kadar büyük bir iz bırakıyor.
-</div>
+<div class="section">Bilimin Evrenine Hoşgeldiniz ✨</div>
+<div class="section">Işığın Dünyası 💫</div>
+<div class="section">Hücreden Galaksilere 🔬🌌</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/postprocessing/EffectComposer.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/postprocessing/RenderPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/postprocessing/UnrealBloomPass.js"></script>
 
 <script>
-// Scene
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, innerWidth/innerHeight,0.1,1000);
+const camera = new THREE.PerspectiveCamera(75,innerWidth/innerHeight,0.1,1000);
 const renderer = new THREE.WebGLRenderer({antialias:true});
 renderer.setSize(innerWidth,innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// Glow light
-const light = new THREE.PointLight(0xffffff,2,100);
-light.position.set(10,10,10);
+// BLOOM
+const composer = new THREE.EffectComposer(renderer);
+composer.addPass(new THREE.RenderPass(scene,camera));
+const bloomPass = new THREE.UnrealBloomPass(
+  new THREE.Vector2(innerWidth,innerHeight),
+  1.5,0.4,0.85
+);
+composer.addPass(bloomPass);
+
+// LIGHT
+const light = new THREE.PointLight(0xffffff,2,200);
+light.position.set(20,20,20);
 scene.add(light);
 
-// Sun
-const sunGeo = new THREE.SphereGeometry(2,32,32);
-const sunMat = new THREE.MeshStandardMaterial({emissive:0xffaa00, color:0xff5500});
-const sun = new THREE.Mesh(sunGeo,sunMat);
+// SUN
+const sun = new THREE.Mesh(
+  new THREE.SphereGeometry(2,32,32),
+  new THREE.MeshBasicMaterial({color:0xffaa00})
+);
 scene.add(sun);
 
-// Earth
-const earthGeo = new THREE.SphereGeometry(1,32,32);
-const earthMat = new THREE.MeshStandardMaterial({color:0x0033ff});
+// EARTH with atmosphere
+const earthGeo = new THREE.SphereGeometry(1,64,64);
+const earthMat = new THREE.MeshPhongMaterial({color:0x0033ff});
 const earth = new THREE.Mesh(earthGeo,earthMat);
 scene.add(earth);
 
-// Moon
-const moonGeo = new THREE.SphereGeometry(0.3,16,16);
-const moonMat = new THREE.MeshStandardMaterial({color:0xaaaaaa});
-const moon = new THREE.Mesh(moonGeo,moonMat);
-scene.add(moon);
+const atmosphere = new THREE.Mesh(
+  new THREE.SphereGeometry(1.2,64,64),
+  new THREE.MeshBasicMaterial({
+    color:0x00aaff,
+    transparent:true,
+    opacity:0.2,
+    side:THREE.BackSide
+  })
+);
+earth.add(atmosphere);
 
-// Saturn
-const saturnGeo = new THREE.SphereGeometry(1.2,32,32);
-const saturnMat = new THREE.MeshStandardMaterial({color:0xffcc99});
-const saturn = new THREE.Mesh(saturnGeo,saturnMat);
-scene.add(saturn);
-
-const ringGeo = new THREE.RingGeometry(1.5,2,64);
-const ringMat = new THREE.MeshBasicMaterial({color:0xffffff,side:THREE.DoubleSide});
-const ring = new THREE.Mesh(ringGeo,ringMat);
-ring.rotation.x = Math.PI/2;
-saturn.add(ring);
-
-// Cell nucleus
-const nucleusGeo = new THREE.SphereGeometry(0.5,32,32);
-const nucleusMat = new THREE.MeshStandardMaterial({color:0xff00ff});
-const nucleus = new THREE.Mesh(nucleusGeo,nucleusMat);
-scene.add(nucleus);
-
-// Particles (stars)
-const starGeo = new THREE.BufferGeometry();
-const starCount = 2000;
-const starPos = new Float32Array(starCount*3);
-for(let i=0;i<starCount*3;i++){
-  starPos[i] = (Math.random()-0.5)*100;
+// DNA
+const dnaGroup = new THREE.Group();
+for(let i=0;i<50;i++){
+  const angle = i*0.3;
+  const sphere = new THREE.Mesh(
+    new THREE.SphereGeometry(0.1,16,16),
+    new THREE.MeshStandardMaterial({color:0xff00ff})
+  );
+  sphere.position.set(Math.cos(angle),i*0.1-2,Math.sin(angle));
+  dnaGroup.add(sphere);
 }
-starGeo.setAttribute('position', new THREE.BufferAttribute(starPos,3));
-const starMat = new THREE.PointsMaterial({size:0.2,color:0xffffff});
-const stars = new THREE.Points(starGeo,starMat);
-scene.add(stars);
+scene.add(dnaGroup);
+
+// Cell + Mitochondria
+const cell = new THREE.Mesh(
+  new THREE.SphereGeometry(2,32,32),
+  new THREE.MeshStandardMaterial({color:0x00ff99,transparent:true,opacity:0.3})
+);
+scene.add(cell);
+
+const mito = new THREE.Mesh(
+  new THREE.TorusGeometry(0.5,0.2,16,100),
+  new THREE.MeshStandardMaterial({color:0xff0000})
+);
+cell.add(mito);
+
+// Photons
+const photonGeo = new THREE.BufferGeometry();
+const photonCount = 1000;
+const photonPos = new Float32Array(photonCount*3);
+for(let i=0;i<photonCount*3;i++){
+  photonPos[i]=(Math.random()-0.5)*50;
+}
+photonGeo.setAttribute('position',new THREE.BufferAttribute(photonPos,3));
+const photons = new THREE.Points(
+  photonGeo,
+  new THREE.PointsMaterial({size:0.1,color:0xffffff})
+);
+scene.add(photons);
 
 // Camera
-camera.position.z = 15;
+camera.position.z=15;
 
-// Explosion
-document.addEventListener("click",()=>{
-  for(let i=0;i<starCount*3;i++){
-    starPos[i] *= 1.2;
-  }
-  starGeo.attributes.position.needsUpdate = true;
+// Scroll photon movement
+window.addEventListener("scroll",()=>{
+  const scrollY=window.scrollY;
+  photons.position.z = scrollY*0.01;
 });
 
-// Animation
+// Confetti physics
+let confetti=[];
+function createConfetti(){
+  for(let i=0;i<200;i++){
+    const geo=new THREE.BoxGeometry(0.1,0.1,0.1);
+    const mat=new THREE.MeshBasicMaterial({color:Math.random()*0xffffff});
+    const cube=new THREE.Mesh(geo,mat);
+    cube.position.set(0,0,0);
+    cube.velocity={
+      x:(Math.random()-0.5)*0.2,
+      y:Math.random()*0.3,
+      z:(Math.random()-0.5)*0.2
+    };
+    scene.add(cube);
+    confetti.push(cube);
+  }
+}
+document.addEventListener("click",createConfetti);
+
+// Animate
 function animate(){
   requestAnimationFrame(animate);
 
-  const t = Date.now()*0.001;
+  const t=Date.now()*0.001;
 
-  earth.position.x = Math.cos(t)*6;
-  earth.position.z = Math.sin(t)*6;
+  earth.position.x=Math.cos(t)*6;
+  earth.position.z=Math.sin(t)*6;
 
-  moon.position.x = earth.position.x + Math.cos(t*3)*2;
-  moon.position.z = earth.position.z + Math.sin(t*3)*2;
+  earth.rotation.y+=0.01;
+  dnaGroup.rotation.y+=0.02;
+  mito.rotation.x+=0.05;
 
-  saturn.position.x = Math.cos(t*0.5)*10;
-  saturn.position.z = Math.sin(t*0.5)*10;
+  confetti.forEach(c=>{
+    c.position.x+=c.velocity.x;
+    c.position.y+=c.velocity.y;
+    c.position.z+=c.velocity.z;
+    c.velocity.y-=0.005;
+  });
 
-  nucleus.position.x = Math.sin(t*2)*3;
-  nucleus.position.y = Math.cos(t*2)*3;
-
-  sun.rotation.y += 0.01;
-
-  renderer.render(scene,camera);
+  composer.render();
 }
 animate();
-
-// AI Voice Message
-window.onload = ()=>{
-  const msg = new SpeechSynthesisUtterance("İyi ki doğdunuz Duygu Hocam. Bilimin ışığıyla nice yıllara.");
-  msg.lang="tr-TR";
-  speechSynthesis.speak(msg);
-
-  setTimeout(()=>{
-    document.getElementById("secret").style.display="block";
-  },8000);
-};
 
 </script>
 </body>
